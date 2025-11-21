@@ -510,9 +510,11 @@ const Parser = struct {
                 return n.setDirective(p.gpa, &d, true);
             },
             '/' => {
-                var it = std.mem.tokenizeScalar(u8, src[1..], '#');
-                const path = utils.stripTrailingSlash(it.next() orelse "");
+                var it = std.mem.splitScalar(u8, src[1..], '#');
+                const path_raw = it.first();
                 const ref = it.next();
+                const path = utils.stripTrailingSlash(path_raw);
+
                 var d: Directive = .{
                     .kind = .{
                         .link = .{

@@ -239,6 +239,49 @@ pub const SrcBuiltins = struct {
         }
     };
 
+    pub const site = struct {
+        pub const signature: Signature = .{
+            .params = &.{.{ .Opt = .str }},
+            .ret = .anydirective,
+        };
+        pub const description =
+            \\Sets the source location of this directive to the site's home page.
+            \\
+            \\The only optional argument is the locale code for mulitlingual
+            \\websites. In mulitlingual websites, the locale code defaults to
+            \\the same locale of the current content file.
+        ;
+        pub fn call(
+            self: anytype,
+            d: *context.Directive,
+            _: Allocator,
+            _: *const context.Content,
+            args: []const context.Value,
+        ) !context.Value {
+            const bad_arg: context.Value = .{ .err = "expected 0 or 1 string arguments" };
+            if (args.len > 1) return bad_arg;
+
+            const code = if (args.len == 0) null else switch (args[0]) {
+                .string => |s| s,
+                else => return bad_arg,
+            };
+
+            if (self.src != null) {
+                return .{ .err = "field already set" };
+            }
+
+            self.src = .{
+                .page = .{
+                    .kind = .absolute,
+                    .ref = "",
+                    .locale = code,
+                },
+            };
+
+            return .{ .directive = d };
+        }
+    };
+
     pub const page = struct {
         pub const signature: Signature = .{
             .params = &.{ .str, .{ .Opt = .str } },
@@ -260,6 +303,8 @@ pub const SrcBuiltins = struct {
             \\matched by Zine with either:
             \\  - content/foo/bar.smd
             \\  - content/foo/bar/index.smd
+            \\
+            \\To link to the website's home page, see `$link.site()`
         ;
         pub fn call(
             self: anytype,
@@ -439,6 +484,7 @@ pub fn pathValidationError(path: []const u8) ?context.Value {
 }
 
 pub fn stripTrailingSlash(path: []const u8) []const u8 {
+    if (path.len == 0) return path;
     if (path[path.len - 1] == '/') return path[0 .. path.len - 1];
     return path;
 }

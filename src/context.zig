@@ -816,6 +816,7 @@ pub const Link = struct {
         pub const asset = utils.SrcBuiltins.asset;
         pub const siteAsset = utils.SrcBuiltins.siteAsset;
         pub const buildAsset = utils.SrcBuiltins.buildAsset;
+        pub const site = utils.SrcBuiltins.site;
         pub const page = utils.SrcBuiltins.page;
         pub const sibling = utils.SrcBuiltins.sibling;
         pub const sub = utils.SrcBuiltins.sub;
