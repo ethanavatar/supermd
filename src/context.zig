@@ -123,7 +123,7 @@ pub const Directive = struct {
 
     kind: Kind,
 
-    pub const Data = ziggy.dynamic.Map(ziggy.dynamic.Value);
+    pub const Data = ziggy.dynamic.Dictionary(ziggy.Dynamic);
     pub const Kind = union(enum) {
         section: Section,
         block: Block,
